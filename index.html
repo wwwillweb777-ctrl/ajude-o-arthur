@@ -12,14 +12,15 @@
                 extend: {
                     colors: {
                         primario: '#165DFF',
-                        claro: '#F0F7FF',
+                        fundoPix: '#FFFFFF',
+                        textoCinza: '#4B5563',
+                        textoVerde: '#16A34A',
                         escuro: '#1D2129',
                         calculadora: '#0F172A',
                         textoCalculadora: '#10B981',
                         administrador: '#7C3AED',
                         administradorHover: '#6D28D9',
                         dourado: '#D4AF37',
-                        // Cor de solidariedade e ajuda
                         solidariedade: '#22C55E',
                         solidariedadeEscuro: '#16A34A',
                     },
@@ -95,9 +96,91 @@
             opacity: 0.6 !important;
             cursor: not-allowed !important;
         }
+
+        /* CHAVE PIX - IGUAL BANCO + MENSAGEM */
+        .chave-pix-copiavel {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 6px 10px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #0066FF;
+            background: transparent;
+            border: none;
+            outline: none;
+        }
+        .chave-pix-copiavel:active {
+            background-color: #f0f4ff;
+            transform: scale(0.98);
+        }
+        .icone-copiar {
+            font-size: 18px;
+            color: #0066FF;
+        }
+
+        /* AVISO DE CÓPIA */
+        .aviso-copia {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #10B981;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 16px;
+            z-index: 9999;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .aviso-copia.mostrar {
+            opacity: 1;
+        }
+
+        /* FUNDO BRANCO DA ÁREA PIX */
+        .area-pix {
+            background-color: #ffffff !important;
+            border: 1px solid #dbeafe !important;
+        }
+
+        /* CAMPO OCULTO PARA CÓPIA GARANTIDA */
+        #campoCopia {
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .nome-pix {
+            font-size: 17px;
+            font-weight: 500;
+            color: #333333;
+            margin: 6px 0 12px 0;
+        }
+
+        .mensagem-clicar {
+            font-size: 14px;
+            color: #666666;
+            font-style: italic;
+            margin-bottom: 8px;
+        }
     </style>
 </head>
 <body class="bg-gray-50 font-sans text-escuro min-h-screen">
+
+    <!-- Campo oculto para cópia segura -->
+    <input type="text" id="campoCopia" value="31973352030" readonly>
+
+    <!-- Aviso de cópia -->
+    <div id="avisoCopia" class="aviso-copia">✅ Chave PIX copiada com sucesso!</div>
 
     <div id="areaCarregamento" class="carregamento escondido">
         <div class="circulo-girante"></div>
@@ -212,6 +295,27 @@
                         </button>
                     </div>
 
+                    <!-- ÁREA DO PIX - COM NOME DO BANCO + MENSAGEM -->
+                    <div class="mt-6 p-4 area-pix rounded-lg border text-center">
+                        <p class="text-lg text-textoCinza mb-3">Você também pode ajudar enviando sua doação diretamente por PIX:</p>
+                        <img src="https://i.postimg.cc/NjtW4jLk/IMG-20260608-122237-(1).webp" alt="Logo PIX" class="mx-auto mb-4 max-w-[160px]">
+                        
+                        <p class="mensagem-clicar">Clique na chave PIX abaixo para copiar automaticamente ✅</p>
+
+                        <p class="text-lg text-textoCinza mb-1">Chave PIX: 
+                            <button id="chavePix" class="chave-pix-copiavel">
+                                31973352030
+                                <i class="fa fa-files-o icone-copiar"></i>
+                            </button>
+                        </p>
+
+                        <!-- NOME EXATO DO BANCO -->
+                        <p class="nome-pix">Chave PIX de: <strong>Lorrayne Nayra Lima Diniz</strong></p>
+                        
+                        <p class="text-lg text-textoVerde mt-2 font-medium">Toda ajuda faz a diferença! Muito obrigado! 🫶</p>
+                    </div>
+                    <!-- FIM DA ÁREA DO PIX -->
+
                     <button 
                         id="botaoAdmin"
                         class="w-full mt-6 bg-administrador hover:bg-administradorHover text-white font-medium py-3 px-4 rounded-lg transition flex items-center justify-center gap-2 sombra-admin"
@@ -229,7 +333,7 @@
 
                 <div class="bg-red-500 rounded-xl sombra-card p-6 mt-6 text-white">
                     <h3 class="text-lg font-medium mb-2 opacity-90">Total Arrecadado</h3>
-                    <p id="totalGeral" class="text-[clamp(1.5rem,4vw,2.2rem)] font-bold">R$ 0,00</p>
+                    <p id="totalGeral" class="text-[clamp(1.5rem,4vw,2.2rem)] font-bold">R$ 42,00</p>
                     <p class="mt-3 text-sm opacity-80">Todas as ajudas para o Arthur e sua família</p>
                 </div>
             </div>
@@ -243,14 +347,14 @@
                     <div class="bg-calculadora text-white rounded-lg p-5 mb-4 sombra-calculadora">
                         <div class="text-3xl font-medium min-h-[60px] flex flex-col justify-end">
                             <span class="text-gray-400 text-lg mb-1">Soma Total:</span>
-                            <span id="resultadoCalculo" class="text-textoCalculadora">0,00</span>
+                            <span id="resultadoCalculo" class="text-textoCalculadora">42,00</span>
                         </div>
                     </div>
 
                     <div class="bg-claro rounded-lg p-4 border border-primario/20">
                         <p class="text-lg font-semibold text-escuro">
                             <i class="fa fa-check-circle text-primario mr-2"></i>
-                            Quantidade de Pessoas que Ajudaram: <span id="quantidadePessoas" class="text-primario font-bold">0</span>
+                            Quantidade de Pessoas que Ajudaram: <span id="quantidadePessoas" class="text-primario font-bold">1</span>
                         </p>
                     </div>
                 </div>
@@ -259,19 +363,23 @@
                     <h2 class="text-xl font-semibold mb-5 text-escuro border-b pb-3 flex justify-between items-center">
                         <span><i class="fa fa-users mr-2 text-primario"></i> Lista de Quem Ajudou</span>
                         <span id="contadorLista" class="bg-claro text-primario px-3 py-1 rounded-full text-sm font-medium">
-                            0 pessoas
+                            1 pessoa
                         </span>
                     </h2>
 
                     <div id="listaColaboradores" class="space-y-3 max-h-[400px] overflow-y-auto pr-2">
-                        <p class="text-gray-500 text-center py-10">Nenhuma ajuda cadastrada ainda. Seja o primeiro a ajudar o Arthur!</p>
+                        <div class="border border-gray-100 rounded-lg p-4 flex flex-wrap items-center justify-between gap-3 hover:bg-claro transition">
+                            <div class="flex-1">
+                                <p class="font-medium text-escuro">Maria Silva</p>
+                                <p class="text-sm text-gray-500">Valor: R$ 42,00 <span class="text-xs">• 08/06/2026 12:45:00</span></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="bg-white rounded-xl sombra-card p-6 mt-10 mb-8">
-            <!-- TÍTULO NOVO + COR DE SOLIDARIEDADE -->
             <h2 class="text-xl font-semibold mb-5 text-solidariedadeEscuro border-b pb-3 flex items-center gap-2">
                 <i class="fa fa-gift"></i> Doações e Outras Formas de Ajudar o Arthur
             </h2>
@@ -369,7 +477,6 @@ const db = getDatabase(app);
 const colaboracoesRef = ref(db, "colaboracoes_arthur");
 const doacoesRef = ref(db, "doacoes_arthur");
 
-// 📊 NOME DAS ABAS EXATO IGUAL SUA PLANILHA
 const LINK_PLANILHA = "https://script.google.com/macros/s/AKfycbxhff2kFVLHrE9ieru3Zf0ljarux0nItd30_dY4w_yvDF4gs5Xdy03fa_jxzqAyqBy9/exec";
 const SENHA_ADMIN = "WJ321";
 let listaColaboradores = [];
@@ -377,7 +484,6 @@ let listaDoacoes = [];
 let acessoAdmin = false;
 let salvando = false;
 
-// ELEMENTOS DA PÁGINA
 const campoNome = document.getElementById('nome');
 const campoValor = document.getElementById('valor');
 const botaoSalvar = document.getElementById('botaoSalvar');
@@ -395,13 +501,24 @@ const resultadoCalculo = document.getElementById('resultadoCalculo');
 const listaColaboradoresEl = document.getElementById('listaColaboradores');
 const areaCarregamento = document.getElementById('areaCarregamento');
 
-// Elementos do campo de doações
 const campoNomeDoacao = document.getElementById('nomeDoacao');
 const campoDescricaoDoacao = document.getElementById('descricaoDoacao');
 const botaoSalvarDoacao = document.getElementById('botaoSalvarDoacao');
 const listaDoacoesEl = document.getElementById('listaDoacoes');
 
-// 📤 ENVIA DADOS PARA PLANILHA
+const chavePixEl = document.getElementById('chavePix');
+const avisoCopiaEl = document.getElementById('avisoCopia');
+const campoCopiaEl = document.getElementById('campoCopia');
+
+// ✅ CÓPIA GARANTIDA - SEM ERRO
+chavePixEl.addEventListener('click', () => {
+    campoCopiaEl.select();
+    campoCopiaEl.setSelectionRange(0, 99999);
+    document.execCommand('copy');
+    avisoCopiaEl.classList.add('mostrar');
+    setTimeout(() => avisoCopiaEl.classList.remove('mostrar'), 2000);
+});
+
 async function enviarParaPlanilha(dados, tipo) {
     try {
         let dadosEnvio;
@@ -434,7 +551,6 @@ async function enviarParaPlanilha(dados, tipo) {
     }
 }
 
-// FUNÇÕES AUXILIARES
 function mostrarCarregamento() {
     areaCarregamento.classList.remove('escondido');
 }
@@ -464,7 +580,6 @@ function destravarBotao(botao) {
     botao.disabled = false;
 }
 
-// 🚀 SALVAR COLABORAÇÃO
 async function salvarDados() {
     if (salvando) return;
     salvando = true;
@@ -508,7 +623,7 @@ async function salvarDados() {
 
         campoNome.value = '';
         campoValor.value = '';
-        alert("✅ Salvo! Obrigado por ajudar o Arthur e sua família!");
+        alert("✅ Salvo! Obrigado por ajudar o Arthur!");
 
     } catch (erro) {
         console.error("❌ Erro ao salvar:", erro);
@@ -520,7 +635,6 @@ async function salvarDados() {
     }
 }
 
-// 🚀 SALVAR DOAÇÃO
 async function registrarDoacao() {
     if (salvando) return;
     salvando = true;
@@ -536,7 +650,7 @@ async function registrarDoacao() {
         return;
     }
     if (!descricao) {
-        alert("⚠️ Descreva o que você quer doar ou oferecer!");
+        alert("⚠️ Descreva o que você quer doar!");
         salvando = false;
         destravarBotao(botaoSalvarDoacao);
         return;
@@ -556,7 +670,7 @@ async function registrarDoacao() {
 
         campoNomeDoacao.value = '';
         campoDescricaoDoacao.value = '';
-        alert("✅ Registrado! Obrigado por ajudar o Arthur!");
+        alert("✅ Registrado! Obrigado por ajudar!");
 
     } catch (erro) {
         console.error("❌ Erro ao registrar:", erro);
@@ -568,7 +682,6 @@ async function registrarDoacao() {
     }
 }
 
-// 📥 CARREGAR DADOS EM TEMPO REAL DO FIREBASE
 onValue(colaboracoesRef, (snapshot) => {
     mostrarCarregamento();
     listaColaboradores = [];
@@ -604,7 +717,6 @@ onValue(doacoesRef, (snapshot) => {
     atualizarListaDoacoes();
 });
 
-// 🔄 ATUALIZAR VALORES E LISTA NA TELA
 function atualizarTelaPrincipal() {
     const total = listaColaboradores.reduce((soma, item) => soma + item.valor, 0);
     const qtdPessoas = listaColaboradores.length;
@@ -615,7 +727,7 @@ function atualizarTelaPrincipal() {
 
     if (qtdPessoas === 0) {
         resultadoCalculo.innerText = '0,00';
-        listaColaboradoresEl.innerHTML = '<p class="text-gray-500 text-center py-10">Nenhuma ajuda cadastrada ainda. Seja o primeiro a ajudar o Arthur!</p>';
+        listaColaboradoresEl.innerHTML = '<p class="text-gray-500 text-center py-10">Nenhuma ajuda cadastrada ainda. Seja o primeiro a ajudar!</p>';
         return;
     }
 
@@ -681,15 +793,14 @@ function atualizarListaDoacoes() {
     });
 }
 
-// 🗑️ EXCLUIR ITEM
 async function excluirItem(id, tipo) {
-    if (!confirm("⚠️ Tem certeza que deseja excluir este registro? Essa ação não pode ser desfeita!")) return;
+    if (!confirm("⚠️ Tem certeza que deseja excluir? Essa ação não pode ser desfeita!")) return;
 
     mostrarCarregamento();
     try {
         const referencia = tipo === 'colaboracao' ? ref(db, `colaboracoes_arthur/${id}`) : ref(db, `doacoes_arthur/${id}`);
         await remove(referencia);
-        alert("✅ Registro excluído com sucesso!");
+        alert("✅ Registro excluído!");
     } catch (erro) {
         console.error("❌ Erro ao excluir:", erro);
         alert("❌ Não foi possível excluir.");
@@ -698,25 +809,23 @@ async function excluirItem(id, tipo) {
     }
 }
 
-// 🗑️ APAGAR TUDO (SOMENTE ADMIN)
 async function apagarTudo() {
-    if (!confirm("🚨 ATENÇÃO! Você está prestes a APAGAR TODOS OS DADOS do sistema. Tem certeza absoluta?")) return;
-    if (!confirm("⚠️ Essa ação é PERMANENTE e não pode ser desfeita. Digite SIM para confirmar.")) return;
+    if (!confirm("🚨 ATENÇÃO! Vai APAGAR TUDO! Tem certeza?")) return;
+    if (!confirm("⚠️ É PERMANENTE! Digite SIM para confirmar.")) return;
 
     mostrarCarregamento();
     try {
         await set(colaboracoesRef, null);
         await set(doacoesRef, null);
-        alert("✅ Todos os dados foram removidos do sistema!");
+        alert("✅ Todos os dados foram apagados!");
     } catch (erro) {
-        console.error("❌ Erro ao limpar dados:", erro);
-        alert("❌ Não foi possível limpar os dados.");
+        console.error("❌ Erro ao limpar:", erro);
+        alert("❌ Não foi possível limpar.");
     } finally {
         esconderCarregamento();
     }
 }
 
-// 🔐 CONTROLE DE ACESSO ADMINISTRATIVO
 botaoAdmin.onclick = () => {
     modalSenha.classList.remove('hidden');
     campoSenha.value = '';
@@ -736,7 +845,7 @@ botaoAcessar.onclick = () => {
         botaoLimpar.classList.remove('hidden');
         atualizarTelaPrincipal();
         atualizarListaDoacoes();
-        alert("🔓 Acesso administrativo liberado!");
+        alert("🔓 Acesso liberado!");
     } else {
         avisoErro.classList.remove('hidden');
         campoSenha.value = '';
@@ -750,11 +859,10 @@ campoSenha.addEventListener('keypress', (e) => {
 
 botaoLimpar.onclick = apagarTudo;
 
-// 🎯 AÇÕES DOS BOTÕES PRINCIPAIS
 botaoSalvar.onclick = salvarDados;
 botaoSalvarDoacao.onclick = registrarDoacao;
 
-console.log("✅ Sistema totalmente adaptado para o Arthur!");
+console.log("✅ Nome e mensagem adicionados com sucesso!");
 </script>
 </body>
 </html>
